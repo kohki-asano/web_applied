@@ -2,7 +2,7 @@
 
 // ① 作る：敵を1体作って返す関数（呼ぶたびに、新しい敵が1体できる）
 function createEnemy(x, vx) {
-  return { x: x, y: floor.y - 32, w: 32, h: 32, vx: vx, alive: true };
+  return { x: x, y: floor.y - 32, w: 32, h: 32, vx: vx, alive: true, moveTimer: 0, move: true };
 }
 
 // ② 入れる：敵をまとめて入れる配列（７-６で入れ直すので let）
@@ -14,16 +14,26 @@ enemies.push(createEnemy(540, 60));
 // ③ 動かす：配列の敵を1体ずつ取り出して、同じ処理をする
 function updateEnemies(dt) {
   for (const enemy of enemies) {
-    enemy.x = enemy.x + enemy.vx * dt;
-    // 端を越えたら、位置を戻して、向きを反対に（５-４の跳ね返り）
-    if (enemy.x < 0) {
-      enemy.x = 0;
-      enemy.vx = -enemy.vx;
+    enemy.moveTimer += dt;
+    if (enemy.moveTimer > 1) 
+    {
+      enemy.move = enemy.move === true ? false : true;
+      enemy.moveTimer = 0;
     }
-    if (enemy.x + enemy.w > canvas.width) {
-      enemy.x = canvas.width - enemy.w;
-      enemy.vx = -enemy.vx;
+    if (enemy.move)
+    {
+       enemy.x = enemy.x + enemy.vx * dt;
+       // 端を越えたら、位置を戻して、向きを反対に（５-４の跳ね返り）
+       if (enemy.x < 0) {
+         enemy.x = 0;
+         enemy.vx = -enemy.vx;
+       }
+       if (enemy.x + enemy.w > canvas.width) {
+         enemy.x = canvas.width - enemy.w;
+         enemy.vx = -enemy.vx;
+       }
     }
+
   }
 }
  
